@@ -78,15 +78,125 @@ BST_Node* insert(BST_Node* root, char* str, int gameNo) {
         
         root->left = insert(root->left, str, gameNo);
         
-    } 
-    else if(compare > 0) {
+    } else if(compare > 0) {
 
         root->right = insert(root->right, str, gameNo);
         
-    } 
-    else {
+    } else {
 
         root->ptr->allowed[gameNo] = 1;
+        
+    }
+    
+    return root;
+    
+}
+
+void freeNodeData(BST_Node* node) {
+    
+    if(node == NULL) {
+        
+        return;
+        
+    }
+    
+    if(node->ptr != NULL) {
+        
+        if (node->ptr->str != NULL) {
+            
+            free(node->ptr->str);
+            
+        }
+        free(node->ptr);
+        
+    }
+    
+}
+
+BST_Node* findMin(BST_Node* root) {
+    if(root == NULL) {
+        
+        return NULL;
+        
+    }
+
+    while(root->left != NULL) {
+        
+        root = root->left;
+        
+    }
+    return root;
+    
+}
+
+BST_Node* deleteNode(BST_Node* root, char* str, int gameNo) {
+
+    if(root == NULL) {
+        
+        return NULL;
+        
+    }
+
+    int compare = strcmp(str, root->ptr->str);
+    if(compare < 0) {
+        
+        root->left = deleteNode(root->left, str, gameNo);
+        
+    } else if(compare > 0) {
+        
+        root->right = deleteNode(root->right, str, gameNo);
+        
+    } else {
+
+        root->ptr->allowed[gameNo] = 0;
+        int isStillAllowed = 0;
+        for(int b = 0; b < NUMGAMES; b++) {
+            
+            if(root->ptr->allowed[b] == 1) {
+                
+                isStillAllowed = 1;
+                break;
+                
+            }
+            
+        }
+
+        if(isStillAllowed) {
+            
+            return root;
+            
+        }
+        
+        if(root->left == NULL) {
+            
+            BST_Node* temp = root->right;
+            freeNodeData(root); 
+            free(root);         
+            return temp;        
+            
+        } else if(root->right == NULL) {
+            
+            BST_Node* temp = root->left;
+            freeNodeData(root);
+            free(root);
+            return temp;
+            
+        } else {
+
+            BST_Node* successor = findMin(root->right);
+            free(root->ptr->str);
+
+            root->ptr->str = (char*)malloc(sizeof(char) * (strlen(successor->ptr->str) + 1));
+            strcpy(root->ptr->str, successor->ptr->str);
+
+            for(int c = 0; c < NUMGAMES; c++) {
+                
+                root->ptr->allowed[c] = successor->ptr->allowed[c];
+                
+            }
+            root->right = deleteNode(root->right, successor->ptr->str, gameNo);
+            
+        }
         
     }
     
