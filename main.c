@@ -62,4 +62,34 @@ BST_Node* createNode(char* str, int gameNo) {
     newNode->left = NULL;
     newNode->right = NULL;
     return newNode;
+    
+}
+
+BST_Node* insert(BST_Node* root, char* str, int gameNo) {
+
+    if(root == NULL) {
+        
+        return createNode(str, gameNo);
+        
+    }
+
+    int compare = strcmp(str, root->ptr->str);
+    if(compare < 0) {
+        
+        root->left = insert(root->left, str, gameNo);
+        
+    } 
+    else if(compare > 0) {
+
+        root->right = insert(root->right, str, gameNo);
+        
+    } 
+    else {
+
+        root->ptr->allowed[gameNo] = 1;
+        
+    }
+    
+    return root;
+    
 }
