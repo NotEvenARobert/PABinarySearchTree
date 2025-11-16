@@ -246,6 +246,43 @@ void freeTree(BST_Node* root) {
     
 }
 
+void findStringsHelper(BST_Node* root, int gameNo, char** stringList, int* count) {
+    
+    if(root == NULL) {
+        
+        return;
+        
+    }
+
+    findStringsHelper(root->left, gameNo, stringList, count);
+    if(root->ptr->allowed[gameNo] == 1) {
+
+        char* newString = (char*)malloc(sizeof(char) * (strlen(root->ptr->str) + 1));
+        strcpy(newString, root->ptr->str);
+        stringList[*count] = newString;
+        (*count)++;
+        
+    }
+    findStringsHelper(root->right, gameNo, stringList, count);
+    
+}
+
+char** allStringsInGame(BST_Node* root, int gameNo, int* arrSize) {
+
+    char** stringList = (char**)malloc(sizeof(char*) * 200000);
+    *arrSize = 0;
+    findStringsHelper(root, gameNo, stringList, arrSize);
+    char** resizedList = (char**)realloc(stringList, sizeof(char*) * (*arrSize));
+    
+    if(resizedList == NULL && *arrSize > 0) {
+
+        return stringList;
+        
+    }
+    return resizedList;
+    
+}
+
 int main(void) {
     
     int n;
@@ -309,6 +346,17 @@ int main(void) {
             int g;
             scanf("%d", &g);
 
+            int size = 0;
+            char** list = allStringsInGame(root, g, &size);
+            for(int f = 0; f < size; f++) {
+                
+                printf("%s\n", list[f]);
+                free(list[f]);
+                
+            }
+            
+            free(list);
+
         } else if(t == 5) {
             
             int g, L;
@@ -322,6 +370,7 @@ int main(void) {
         
     }
 
+    freeTree(root);
     return 0;
     
 }
