@@ -231,21 +231,6 @@ BST_Node* search(BST_Node* root, char* str) {
     
 }
 
-void freeTree(BST_Node* root) {
-    
-    if(root == NULL) {
-        
-        return;
-        
-    }
-    
-    freeTree(root->left);
-    freeTree(root->right);
-    freeNodeData(root);
-    free(root);
-    
-}
-
 void findStringsHelper(BST_Node* root, int gameNo, char** stringList, int* count) {
     
     if(root == NULL) {
@@ -280,6 +265,65 @@ char** allStringsInGame(BST_Node* root, int gameNo, int* arrSize) {
         
     }
     return resizedList;
+    
+}
+
+int countStringsOfLength(BST_Node* root, int gameNo, int L) {
+
+    if(root == NULL) {
+        
+        return 0;
+        
+    }
+
+    int count = 0;
+    if(root->ptr->allowed[gameNo] == 1 && strlen(root->ptr->str) == L) {
+        
+        count = 1;
+        
+    }
+
+    int leftCount = countStringsOfLength(root->left, gameNo, L);
+    int rightCount = countStringsOfLength(root->right, gameNo, L);
+    return count + leftCount + rightCount;
+    
+}
+
+BST_Node* findSuccessor(BST_Node* root, char* str) {
+    
+    BST_Node* successor = NULL;
+    BST_Node* current = root;
+    while(current != NULL) {
+        
+        int compare = strcmp(str, current->ptr->str);
+        if(compare < 0) {
+
+            successor = current;
+            current = current->left;
+            
+        } else {
+            
+            current = current->right;
+            
+        }
+        
+    }
+    return successor;
+    
+}
+
+void freeTree(BST_Node* root) {
+    
+    if(root == NULL) {
+        
+        return;
+        
+    }
+    
+    freeTree(root->left);
+    freeTree(root->right);
+    freeNodeData(root);
+    free(root);
     
 }
 
@@ -362,9 +406,23 @@ int main(void) {
             int g, L;
             scanf("%d %d", &g, &L);
 
+            int total = countStringsOfLength(root, g, L);
+            printf("%d\n", total);
+
         } else if(t == 6) {
             
             scanf("%s", buffer);
+
+            BST_Node* succ = findSuccessor(root, buffer);
+            if(succ == NULL) {
+                
+                printf("NO SUCCESSOR\n");
+                
+            } else {
+                
+                printf("%s\n", succ->ptr->str);
+                
+            }
 
         }
         
