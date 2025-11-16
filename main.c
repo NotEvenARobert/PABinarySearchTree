@@ -203,3 +203,125 @@ BST_Node* deleteNode(BST_Node* root, char* str, int gameNo) {
     return root;
     
 }
+
+BST_Node* search(BST_Node* root, char* str) {
+
+    if(root == NULL) {
+        
+        return NULL;
+        
+    }
+
+    int compare = strcmp(str, root->ptr->str);
+    if(compare == 0) {
+        
+        return root;
+        
+    }
+
+    if (compare < 0) {
+        
+        return search(root->left, str);
+        
+    } else {
+        
+        return search(root->right, str);
+        
+    }
+    
+}
+
+void freeTree(BST_Node* root) {
+    
+    if(root == NULL) {
+        
+        return;
+        
+    }
+    
+    freeTree(root->left);
+    freeTree(root->right);
+    freeNodeData(root);
+    free(root);
+    
+}
+
+int main(void) {
+    
+    int n;
+    scanf("%d", &n);
+    BST_Node* root = NULL;
+    char buffer[MAXSIZE + 1];
+
+    for(int d = 0; d < n; d++) {
+        
+        int t;
+        scanf("%d", &t);
+        if(t == 1) {
+            
+            int g;
+            scanf("%d %s", &g, buffer);
+            root = insert(root, buffer, g);
+
+        } else if(t == 2) {
+            
+            int g;
+            scanf("%d %s", &g, buffer);
+            root = deleteNode(root, buffer, g);
+
+        } else if(t == 3) {
+            
+            scanf("%s", buffer);
+            BST_Node* result = search(root, buffer);
+
+            if(result == NULL) {
+                
+                printf("-1\n");
+                
+            } else {
+                
+                int found = 0;
+                for(int e = 0; e < NUMGAMES; e++) {
+                    
+                    if(result->ptr->allowed[e] == 1) {
+                        
+                        printf("%d ", e);
+                        found = 1;
+                        
+                    }
+                    
+                }
+
+                if(!found) {
+                    
+                    printf("-1\n");
+                    
+                } else {
+                    
+                    printf("\n");
+                    
+                }
+                
+            }
+            
+        } else if(t == 4) {
+            
+            int g;
+            scanf("%d", &g);
+
+        } else if(t == 5) {
+            
+            int g, L;
+            scanf("%d %d", &g, &L);
+
+        } else if(t == 6) {
+            
+            scanf("%s", buffer);
+
+        }
+        
+    }
+
+    return 0;
+    
+}
