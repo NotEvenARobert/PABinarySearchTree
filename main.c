@@ -20,8 +20,8 @@ typedef struct NYT_String {
 typedef struct BST_Node {
 
     NYT_String* ptr;
-    BST_Node* left;
-    BST_Node* right;
+    struct BST_Node* left;
+    struct BST_Node* right;
 
 } BST_Node;
 
